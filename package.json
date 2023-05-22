@@ -1,0 +1,17 @@
+{
+  "name": "rock-paper-scissors-extended",
+  "version": "1.0.0",
+  "packageManager": "pnpm@8.5.1",
+  "description": "",
+  "author": "RichGihratik (Cyrus)",
+  "license": "MIT",
+  "scripts": {
+    "build": "npm run clean && tsc -p tsconfig.json && npm run run",
+    "clean": "rm -rf dist build",
+    "run": "node dist"
+  },
+  "devDependencies": {
+    "@types/node": "^20.2.0",
+    "typescript": "^5.0.4"
+  }
+}
