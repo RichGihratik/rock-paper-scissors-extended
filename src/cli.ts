@@ -1,6 +1,8 @@
 import { SetupError } from "./error";
 import { UI, IGame, GameResult } from "./types";
 import { terminal as term } from "terminal-kit";
+import { clearScreenDown, cursorTo } from "node:readline";
+import { stdout } from "node:process";
 
 export class CLI implements UI {
   #game: IGame;
@@ -15,6 +17,7 @@ export class CLI implements UI {
     } catch (e) {
       if (e instanceof SetupError) {
         term.bold.brightRed(`Invalid input: ${e.message}\n`);
+        term.processExit(0);
       } else {
         throw e;
       }
@@ -23,38 +26,39 @@ export class CLI implements UI {
 
   private setupAndRun() {
     this.#game.setup(process.argv.slice(2));
-    this.drawSeparator();
-    term.bold.blue(`HMAC: ^G${this.#game.moveOrHash}`);
-    this.drawSeparator();
     this.calcTable();
     this.displayControls();
   } 
 
   private displayControls() {
+    this.clearDisplay();
+    this.displayHMAC();
+
     term.bold.cyan("\nAvailable moves (arrows to select, enter to submit): \n");
 
     const items = this.#game.moves.map(
-      (move, index) => `${index + 1}. ${move}`
+      (move, index) => `${index + 1}. ${move} `
     );
 
-    const helpIndex = items.push("?. Help") - 1;
-    const exitIndex = items.push("X. Exit") - 1;
+    const helpIndex = items.push("?. Help ") - 1;
+    const exitIndex = items.push("X. Exit ") - 1;
 
     term.singleColumnMenu(items, (_, response) => {
       term("\n");
       if (response.selectedIndex === helpIndex) this.displayTable();
       else if (response.selectedIndex === exitIndex) {
         term.bold.cyan("Bye!\n");
-        process.exit();
+        term.processExit(0);
       } else this.makeMove(response.selectedIndex);
     });
   }
 
   private makeMove(index: number): void {
+    this.clearDisplay();
     const result = this.#game.makeMove(index);
 
-    term.bold.green(`Your move: ${this.#game.moves[index]}\n`);
-    term.bold.brightRed(`Computer's move: ${this.#game.moveOrHash}\n\n`);
+    term.green(`Your move: ${this.#game.moves[index]}\n`);
+    term.brightRed(`Computer's move: ${this.#game.moveOrHash}\n\n`);
 
     switch (result) {
       case GameResult.Draw:
@@ -69,10 +73,11 @@ export class CLI implements UI {
     }
 
     this.drawSeparator(74);
-    term.bold.blue(`HMAC key: ^G${this.#game.key ?? "(Error occured)"}`);
+    term.bold.blue(`HMAC key: `);
+    term.brightGreen(`${this.#game.key ?? "(Error occured)"}`);
     this.drawSeparator(74);
 
-    process.exit();
+    term.processExit(0);
   }
 
   // TABLE
@@ -98,10 +103,15 @@ export class CLI implements UI {
   }
 
   private displayTable() {
-    this.drawSeparator();
+    this.clearDisplay();
 
-    term.bold.cyan("Here is a win table of moves\n");
-    term.bold.cyan("Columns: player's moves, Rows: computer's moves\n\n");
+    term.bold.cyan("RULES: \n")
+
+    term.cyan(`Computer randomly have already made a move\n`);
+    term.cyan(`Your task is try to guess and beat it with your move.\n`);
+    term.cyan(`Using key (will be shown after your move) and HMAC (SHA3-256), you can check whether computer played fair\n`);
+    term.cyan("Here is a win table of moves:\n");
+    term.cyan("(columns - player's moves, rows - computer's moves)\n\n");
 
     term.table(
       this.#table,
@@ -111,14 +121,18 @@ export class CLI implements UI {
         textAttr: { bgColor: "default" },
         firstCellTextAttr: { bgColor: "cyan"},
         firstRowTextAttr: { bgColor: "red" },
-        firstColumnTextAttr: { bgColor: "blue" },
+        firstColumnTextAttr: { bgColor: "brightGreen" },
         fit: true,
         width: 50,
       }
     );
+    
+    term.blue('\nPress ENTER to continue...');
 
-    this.drawSeparator();
-    this.displayControls();
+    term.inputField({ echo: false }, () => {
+      term('\n');
+      this.displayControls();
+    })
   }
 
   // UTILS
@@ -126,5 +140,20 @@ export class CLI implements UI {
 
   private drawSeparator(length = 64 + 6) {
     term("\n" + "=".repeat(length) + "\n");
+  }
+
+  private displayHMAC() {
+    this.drawSeparator();
+    term.bold.blue(`HMAC: `);
+    term.brightGreen(`${this.#game.moveOrHash}`);
+    this.drawSeparator();
+  }
+
+  private clearDisplay() {
+    const repeatCount = stdout.rows - 2
+    const blank = repeatCount > 0 ? '\n'.repeat(repeatCount) : ''
+    console.log(blank)
+    cursorTo(stdout, 0, 0);
+    clearScreenDown(stdout);
   }
 }
