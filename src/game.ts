@@ -30,7 +30,7 @@ export class Game implements IGame {
 
   setup(moves: string[]): void {
     if (moves.some((move) => moves.indexOf(move) !== moves.lastIndexOf(move)))
-      throw new SetupError("Some elements occur twice in list!");
+      throw new SetupError("Some elements occur more than once in list!");
     if (moves.length < 3)
       throw new SetupError("Item's count must be more than 3!");
     if (moves.length % 2 !== 1)

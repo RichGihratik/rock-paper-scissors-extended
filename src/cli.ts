@@ -16,7 +16,9 @@ export class CLI implements UI {
       this.setupAndRun();
     } catch (e) {
       if (e instanceof SetupError) {
-        term.bold.brightRed(`Invalid input: ${e.message}\n`);
+        term.brightRed(`Invalid arguments: ${e.message}`);
+
+        term.cyan(`\nExample of correct args: "node dist Rock Scissors Paper"`)
         term.processExit(0);
       } else {
         throw e;
