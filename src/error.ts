@@ -1,3 +1,3 @@
-export class GameError extends Error {
+export class SetupError extends Error {
   name = "GameError";
 }
