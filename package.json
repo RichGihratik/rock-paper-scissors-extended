@@ -6,12 +6,17 @@
   "author": "RichGihratik (Cyrus)",
   "license": "MIT",
   "scripts": {
-    "build": "npm run clean && tsc -p tsconfig.json && npm run run",
+    "build-test": "npm run build && npm run run",
+    "build": "npm run clean && tsc -p tsconfig.json",
     "clean": "rm -rf dist build",
-    "run": "node dist"
+    "run": "node dist Rock Scissors Paper"
   },
   "devDependencies": {
     "@types/node": "^20.2.0",
     "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "@types/terminal-kit": "^2.5.1",
+    "terminal-kit": "^3.0.0"
   }
 }

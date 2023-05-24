@@ -1,3 +1,3 @@
-import { Test } from "./test";
+import { App } from "./app";
 
-console.log((new Test()).testIt());
+(new App).run();
