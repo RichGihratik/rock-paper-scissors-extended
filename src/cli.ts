@@ -92,7 +92,7 @@ export class CLI {
 
     for (let j = 0; j < this.#game.moves.length; j++)
       for (let i = 0; i < this.#game.moves.length; i++) {
-        const result = this.#game.whoWins(j, i);
+        const result = this.#game.getGameResult(j, i);
 
         const tableText = result === GameResult.Draw 
           ? "^cDraw"

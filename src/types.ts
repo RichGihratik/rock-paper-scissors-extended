@@ -17,5 +17,5 @@ export interface IGame {
   readonly gameStarted: boolean;
   setup(moves: string[]): void;
   makeMove(moveIndex: number): GameResult;
-  whoWins(move1: number, move2: number): GameResult;
+  getGameResult(yourMove: number, opponentsMove: number): GameResult;
 }

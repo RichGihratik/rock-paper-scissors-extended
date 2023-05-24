@@ -50,21 +50,21 @@ export class Game implements IGame {
 
     this.#gameStarted = false;
 
-    return this.whoWins(moveIndex, this.#move);
+    return this.getGameResult(moveIndex, this.#move);
   }
 
-  whoWins(move1: number, move2: number): GameResult {
+  getGameResult(yourMove: number, opponentsMove: number): GameResult {
     if (
-      move1 < 0 ||
-      move1 >= this.#moves.length ||
-      move2 < 0 ||
-      move2 >= this.#moves.length
+      yourMove < 0 ||
+      yourMove >= this.#moves.length ||
+      opponentsMove < 0 ||
+      opponentsMove >= this.#moves.length
     )
       throw new TypeError("Invalid numbers!");
 
-    if (move1 === move2) return GameResult.Draw;
+    if (yourMove === opponentsMove) return GameResult.Draw;
 
-    const diff = move1 - move2;
+    const diff = yourMove - opponentsMove;
     const positiveDir = diff < 0 ? this.#moves.length + diff : diff;
 
     const lengthToWin = (this.#moves.length - 1) / 2;
