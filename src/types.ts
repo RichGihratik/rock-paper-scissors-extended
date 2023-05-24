@@ -19,7 +19,3 @@ export interface IGame {
   makeMove(moveIndex: number): GameResult;
   whoWins(move1: number, move2: number): GameResult;
 }
-
-export interface UI {
-  start(): void;
-}

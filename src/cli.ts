@@ -1,10 +1,10 @@
 import { SetupError } from "./error";
-import { UI, IGame, GameResult } from "./types";
+import { IGame, GameResult } from "./types";
 import { terminal as term } from "terminal-kit";
 import { clearScreenDown, cursorTo } from "node:readline";
 import { stdout } from "node:process";
 
-export class CLI implements UI {
+export class CLI {
   #game: IGame;
 
   constructor(game: IGame) {
